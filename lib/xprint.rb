@@ -37,10 +37,11 @@ module XPrint
         # X is a Proc, print more compact version of standard Proc.inspect
         # text.
         elsif x.class == Proc
+            type = x.lambda? ? 'Lambda' : 'Proc'
             source, line = x.source_location
             source = source.gsub('\\', '/').split('/')[-2..-1].join('/')
             
-            return "<Proc @ #{source} [Line #{line}]>"
+            return "<#{type} @ #{source} [Line #{line}]>"
         # X is an Array, print list of all items.
         elsif x.class == Array
             result = "[\n"

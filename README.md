@@ -1,4 +1,4 @@
-[![Gem](https://img.shields.io/badge/gem-v0.5.0-blue?style=for-the-badge&logo=ruby)]() &nbsp;
+[![Gem](https://img.shields.io/badge/gem-v0.5.1-blue?style=for-the-badge&logo=ruby)]() &nbsp;
 
 # xprint.rb
 
@@ -9,6 +9,7 @@ also work for any object.
 xprint will:
 - Show basic kinds of data (numbers, strings, symbols, booleans, nil) 
   pretty much as-is.
+- 
 - Show structured data (Arrays/Hashes/Objects) over multiple lines with 
   everything indented consistently.
   - Arrays show a list of all items, also showing the index for each item.
