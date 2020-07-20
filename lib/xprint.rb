@@ -6,10 +6,15 @@ module XPrint
     @hash_name_classes = @data_classes + [Proc]
     @tab = "\t"
     @show_indexes = true
+    @full_proc_path = false
 
     def self.set(**kwargs)
         @tab = kwargs[:tab] unless kwargs[:tab].nil?
         @show_indexes = kwargs[:show_indexes] unless kwargs[:show_indexes].nil?
+
+        unless @full_proc_path.nil?
+            @full_proc_path = kwargs[:full_proc_path]
+        end
     end
 
     def self.tab()
@@ -39,7 +44,11 @@ module XPrint
         elsif x.class == Proc
             type = x.lambda? ? 'Lambda' : 'Proc'
             source, line = x.source_location
-            source = source.gsub('\\', '/').split('/')[-2..-1].join('/')
+            source = source.gsub('\\', '/')
+            
+            unless @full_proc_path
+                source = source.split('/')[-2..-1].join('/')
+            end
             
             return "<#{type} @ #{source} [Line #{line}]>"
         # X is an Array, print list of all items.
@@ -145,3 +154,5 @@ end
 def xpand(item, tab: "\t")
     XPrint::xpand(item, tab: tab)
 end
+
+xp ->{}
