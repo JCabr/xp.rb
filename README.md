@@ -77,22 +77,22 @@ xp data
 Output:
 ```rb
 {
-	:people => [
-		{
-			:name    => "Jim", 
-			:age     => 19, 
-			:hobbies => [
-				[0] "Video Games"
-			]
-		}, 
-		{
-			:name    => "Jam", 
-			:age     => 34, 
-			:hobbies => [
-				[0] "Eating Jam"
-			]
-		}
-	]
+    :people => [
+        {
+            :name    => "Jim", 
+            :age     => 19, 
+            :hobbies => [
+                [0] "Video Games"
+            ]
+        }, 
+        {
+            :name    => "Jam", 
+            :age     => 34, 
+            :hobbies => [
+                [0] "Eating Jam"
+            ]
+        }
+    ]
 }
 ```
 
@@ -121,22 +121,22 @@ xp data
 Output:
 ```rb
 {
-	:people => [
-		Person(
-			@name    = "Jim"
-			@age     = 19
-			@hobbies = [
-				[0] "Video Games"
-			]
-		), 
-		Person(
-			@name    = "Jam"
-			@age     = 34
-			@hobbies = [
-				[0] "Eating Jam"
-			]
-		)
-	]
+    :people => [
+        Person(
+            @name    = "Jim"
+            @age     = 19
+            @hobbies = [
+                [0] "Video Games"
+            ]
+        ), 
+        Person(
+            @name    = "Jam"
+            @age     = 34
+            @hobbies = [
+                [0] "Eating Jam"
+            ]
+        )
+    ]
 }
 ```
 
@@ -149,9 +149,9 @@ xp Person.new 'Jim', 19, 'Video Games'
 Output:
 ```rb
 Struct Person(
-	name  = "Jim"
-	age   = 19
-	hobby = "Video Games"
+    name  = "Jim"
+    age   = 19
+    hobby = "Video Games"
 )
 ```
 &nbsp;
@@ -172,20 +172,20 @@ puts "people: #{xpand data}"
 Ouput:
 ```rb
 people: [
-	Person(
-		@name    = "Jim"
-		@age     = 19
-		@hobbies = [
-			[0] "Video Games"
-		]
-	), 
-	Person(
-		@name    = "Jam"
-		@age     = 34
-		@hobbies = [
-			[0] "Eating Jam"
-		]
-	)
+    Person(
+        @name    = "Jim"
+        @age     = 19
+        @hobbies = [
+            [0] "Video Games"
+        ]
+    ), 
+    Person(
+        @name    = "Jam"
+        @age     = 34
+        @hobbies = [
+            [0] "Eating Jam"
+        ]
+    )
 ]
 ```
 &nbsp;
