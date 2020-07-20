@@ -154,5 +154,3 @@ end
 def xpand(item, tab: "\t")
     XPrint::xpand(item, tab: tab)
 end
-
-xp ->{}
