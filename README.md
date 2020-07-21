@@ -220,3 +220,8 @@ Output:
   3
 ]
 ```
+
+Check out
+[this wiki page](https://github.com/JCabr/xprint.rb/wiki/Customization)
+for more in-depth details about customizing xprint, such as how to
+put your settings into a file and load the settings in your code.
