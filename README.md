@@ -112,7 +112,7 @@ class Person
     end
 end
 
-jim = Person.new 'Jim',19, 'Video Games'
+jim = Person.new 'Jim', 19, 'Video Games'
 jam = Person.new 'Jam', 34, 'Eating Jam'
 
 data = { people: [jim, jam] }
@@ -218,4 +218,3 @@ Output:
   3
 ]
 ```
-*Note: Colored text is not implemented yet, but is planned.*
