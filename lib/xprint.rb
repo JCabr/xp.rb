@@ -1,5 +1,6 @@
 require 'bigdecimal'
 require 'date'
+require 'yaml'
 
 module XPrint
     @data_classes = [
@@ -7,14 +8,14 @@ module XPrint
         Symbol, Date, Time, DateTime, BigDecimal, Rational
     ]
     @hash_name_classes = @data_classes + [Proc]
-    @tab = "\t"
+    @tab = "  "
     @indexes = true
     @full_proc_path = false
     @braces = true
     @date_format = '%F'
     @time_format = '%c'
     @datetime_format = '%FT%T%:z'
-    @color = false
+    @color = true
     @colors = {
         attribute:   :blue,
         bigdecimal:  :darkcyan,
@@ -76,6 +77,48 @@ module XPrint
         return
     end
 
+    def self.load_file(config)
+        config_data = YAML.load( File.read config )
+        config_data = self.symbolize_keys(config_data)
+
+        if config_data.key? :general
+            self.set **config_data[:general]
+        end
+
+        if config_data.key? :colors
+            color_data = config_data[:colors]
+
+            color_data.each do |name, color|
+                color_data[name] = color.to_sym
+            end
+
+            self.set_color_for **config_data[:colors]
+        end
+
+        if config_data.key? :'color codes'
+            self.set_color_code_for **config_data[:'color codes']
+        end
+    end
+
+    def self.load(config)
+        calling_file = caller_locations.first.absolute_path
+        base_dir = File.dirname calling_file
+        relative_config = File.expand_path config, base_dir
+
+        self.load_file relative_config
+    end
+
+    private_class_method def self.symbolize_keys(hash)
+        hash.inject({}) do |result, (key, value)|
+            new_key = key.to_sym
+            new_value = value.is_a?(Hash) ? symbolize_keys(value) : value
+
+            result[new_key] = new_value
+            
+            result
+        end
+    end
+
     def self.set_color_for(**kwargs)
         kwargs.each do |keyword, arg|
             @colors[keyword] = arg
@@ -135,7 +178,7 @@ module XPrint
         return result
     end
 
-    def self.xpand(x, indent: '', tab: "\t")
+    def self.xpand(x, indent: '', tab: '  ')
 
         _indent = "#{tab}#{indent}"
 
@@ -180,7 +223,14 @@ module XPrint
                 data = xpand(item, indent: _indent, tab: tab)
                 
                 result += "#{_indent}"
-                result += "#{colorize("[#{index}]", :index)} " if @indexes
+                if @indexes
+                    adjustment = x.length.to_s.length + 3
+                    # Account for characters used for color coding.
+                    adjustment += 9 if @color
+
+                    result += "#{colorize("[#{index}]", :index)} ".
+                                ljust(adjustment)
+                end
                 result += "#{data}"
     
                 unless index + 1 == x.length
@@ -311,3 +361,5 @@ end
 def xpand(item, tab: "\t")
     XPrint::xpand(item, tab: tab)
 end
+
+xp XPrint

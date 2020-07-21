@@ -9,7 +9,8 @@ also work for any object.
 xprint will:
 - Show basic kinds of data (numbers, strings, symbols, booleans, nil) 
   pretty much as-is.
-- 
+    - Also supports commonly used data objects like:
+        - Proc, Date, Time, DateTime, BigDecimal, and Rational.
 - Show structured data (Arrays/Hashes/Objects) over multiple lines with 
   everything indented consistently.
   - Arrays show a list of all items, also showing the index for each item.
@@ -19,6 +20,7 @@ xprint will:
     all the `=`'s are aligned like with Hashes.
     - Structs are also covered, being slightly different but
       are shown the same way.
+    - Modules are also covered.
 - Any nested data, like an object inside of an object, will be shown fully.
 
 
