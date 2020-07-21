@@ -9,6 +9,8 @@ Gem::Specification.new do |spec|
     spec.description = "
     Gem that allows for pretty printing data over multiple lines and with
     indentation, and works with objects as well as basic data types.
+
+    Also allows color, and loading settings via a YAML config file.
     ".split.join(' ')
     spec.homepage    = 'https://github.com/JCabr/xprint.rb'
     spec.license     = 'MIT'
