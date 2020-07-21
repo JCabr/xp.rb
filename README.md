@@ -80,22 +80,22 @@ xp data
 Output:
 ```rb
 {
-    :people => [
-        {
-            :name    => "Jim", 
-            :age     => 19, 
-            :hobbies => [
-                [0] "Video Games"
-            ]
-        }, 
-        {
-            :name    => "Jam", 
-            :age     => 34, 
-            :hobbies => [
-                [0] "Eating Jam"
-            ]
-        }
-    ]
+  :people => [
+    {
+      :name    => "Jim", 
+      :age     => 19, 
+      :hobbies => [
+        [0] "Video Games"
+      ]
+    }, 
+    {
+      :name    => "Jam", 
+      :age     => 34, 
+      :hobbies => [
+        [0] "Eating Jam"
+      ]
+    }
+  ]
 }
 ```
 
@@ -124,22 +124,22 @@ xp data
 Output:
 ```rb
 {
-    :people => [
-        Person(
-            @name    = "Jim"
-            @age     = 19
-            @hobbies = [
-                [0] "Video Games"
-            ]
-        ), 
-        Person(
-            @name    = "Jam"
-            @age     = 34
-            @hobbies = [
-                [0] "Eating Jam"
-            ]
-        )
-    ]
+  :people => [
+    Person(
+      @name    = "Jim"
+      @age     = 19
+      @hobbies = [
+        [0] "Video Games"
+      ]
+    ), 
+    Person(
+      @name    = "Jam"
+      @age     = 34
+      @hobbies = [
+        [0] "Eating Jam"
+      ]
+    )
+  ]
 }
 ```
 
@@ -152,9 +152,9 @@ xp Person.new 'Jim', 19, 'Video Games'
 Output:
 ```rb
 Struct Person(
-    name  = "Jim"
-    age   = 19
-    hobby = "Video Games"
+  name  = "Jim"
+  age   = 19
+  hobby = "Video Games"
 )
 ```
 &nbsp;
@@ -175,20 +175,20 @@ puts "people: #{xpand data}"
 Ouput:
 ```rb
 people: [
-    Person(
-        @name    = "Jim"
-        @age     = 19
-        @hobbies = [
-            [0] "Video Games"
-        ]
-    ), 
-    Person(
-        @name    = "Jam"
-        @age     = 34
-        @hobbies = [
-            [0] "Eating Jam"
-        ]
-    )
+  Person(
+    @name    = "Jim"
+    @age     = 19
+    @hobbies = [
+      [0] "Video Games"
+    ]
+  ), 
+  Person(
+    @name    = "Jam"
+    @age     = 34
+    @hobbies = [
+      [0] "Eating Jam"
+    ]
+  )
 ]
 ```
 &nbsp;
@@ -206,19 +206,30 @@ colors) and the text to use for each "tab" used when indenting data.
 
 To customize these features, you just modify the XPrint module:
 ```rb
-# Want 2 spaces for tabs and no index number in Arrays? Do this:
-XPrint.set tab: '  ', show_indexes: false
+# Want 4 spaces for tabs and no braces? Do this:
+XPrint.set tab: ' ' * 4,  braces: false
 
-numbers = [1,2,3]
-xp numbers
+friends = {
+    'Jim' => {
+        favorite_numbers: [1, 2, 3]
+    },
+    'Jam' => {
+        favorite_numbers: [2, 6]
+    }
+}
+xp friends
 ```
 Output:
 ```rb
-[
-  1,
-  2,
-  3
-]
+"Jim" => 
+    :favorite_numbers => 
+        [0] 1 
+        [1] 2 
+        [2] 3
+"Jam" => 
+    :favorite_numbers => 
+        [0] 2 
+        [1] 6
 ```
 
 Check out
