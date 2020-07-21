@@ -1,4 +1,4 @@
-[![Gem](https://img.shields.io/badge/gem-v0.5.2-blue?style=for-the-badge&logo=ruby)]() &nbsp;
+[![Gem](https://img.shields.io/gem/v/xprint.svg?color=blue&style=for-the-badge&logo=ruby)](https://rubygems.org/gems/xprint)
 
 # xprint.rb
 

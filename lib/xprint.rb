@@ -7,14 +7,23 @@ module XPrint
     @tab = "\t"
     @show_indexes = true
     @full_proc_path = false
+    @braces = true
 
     def self.set(**kwargs)
-        @tab = kwargs[:tab] unless kwargs[:tab].nil?
-        @show_indexes = kwargs[:show_indexes] unless kwargs[:show_indexes].nil?
-
-        unless @full_proc_path.nil?
-            @full_proc_path = kwargs[:full_proc_path]
+        set_vars = {
+            tab:            ->(data) { @tab            = data },
+            show_indexes:   ->(data) { @show_indexes   = data },
+            full_proc_path: ->(data) { @full_proc_path = data },
+            braces:         ->(data) { @braces         = data }
+        }
+    
+        kwargs.each do |keyword, arg|
+            if set_vars.key? keyword
+                set_vars[keyword].(arg)
+            end
         end
+    
+        return
     end
 
     def self.tab()
@@ -27,8 +36,33 @@ module XPrint
 
     def self.xp(*args)
         args.each do |arg|
-            puts self.xpand(arg, tab: @tab)
+            xpanded_text = self.xpand(arg, tab: @tab)
+
+            unless @braces
+                xpanded_text = self.shift_indentation_down(xpanded_text).lstrip()
+            end
+
+            puts xpanded_text
         end
+    end
+
+
+    private_class_method def self.shift_indentation_down(text)
+        # Only shift if no 
+        return text if text.match?(/^\S/)
+        result = ''
+
+        text.each_line do |line|
+            result += (
+                if line.start_with? @tab
+                    line[@tab.length..-1]
+                else
+                    line
+                end
+            )
+        end
+
+        return result
     end
 
     def self.xpand(x, indent: '', tab: "\t")
@@ -52,8 +86,10 @@ module XPrint
             
             return "<#{type} @ #{source} [Line #{line}]>"
         # X is an Array, print list of all items.
+        elsif x.class == Class
+            return "<Class #{x}>"
         elsif x.class == Array
-            result = "[\n"
+            result = "#{@braces ? '[' : ''}\n"
     
             x.each_with_index do |item, index|
                 data = xpand(item, indent: _indent, tab: tab)
@@ -63,15 +99,15 @@ module XPrint
                 result += "#{data}"
     
                 unless index + 1 == x.length
-                    result += ", \n"
+                    result += "#{@braces ? ', ' : ''} \n"
                 end
             end
     
-            result += "\n#{indent}]"
+            result += "\n#{indent}]" if @braces
             return result
         # X is a Hash, print all keys and values.
         elsif x.class == Hash
-            result = "{\n"
+            result = "#{@braces ? '{' : ''}\n"
 
             longest_key = (
                 x.keys.filter do |k, v|
@@ -105,12 +141,12 @@ module XPrint
                 end
             end
 
-            result += "\n#{indent}}"
+            result += "\n#{indent}}" if @braces
     
             return result
         # X is a Structure; essentially a special case of X being an object.
         elsif x.is_a? Struct
-            result = "Struct #{x.class}(\n"
+            result = "Struct #{x.class}#{@braces ? '(' : ''}\n"
             longest_item = x.members.map { |m| m.to_s.length }.max()
 
             x.each_pair do |name, value|
@@ -120,13 +156,15 @@ module XPrint
                 result += "#{_indent}#{attr_name} = #{attr_data}\n"
             end
 
-            result += "#{indent})"
+            result += "#{indent})" if @braces
 
             return result
         # X is any arbitrary object; print all instance variables.
         else
-            result = "#{x.class}(\n"
+            classname = x.class == Module ? "Module #{x}" : x.class
+            result = "#{classname}#{@braces ? '(' : ''}"
             ivars = x.instance_variables
+            result += "\n" if ivars.length > 0
             longest_var = ivars.map { |v| v.to_s.length }.max()
     
             ivars.each_with_index do |var, index|
@@ -140,7 +178,7 @@ module XPrint
                 result += "#{_indent}#{attr_name} = #{attr_data}\n"
             end
     
-            result += "#{indent})"
+            result += "#{ivars.length > 0 ? indent: ''})" if @braces
     
             return result
         end
