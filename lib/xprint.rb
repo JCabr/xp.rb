@@ -3,41 +3,49 @@ require 'date'
 require 'yaml'
 
 module XPrint
-    @data_classes = [
+    @data_classes      = [
         String, Integer, Float, TrueClass, FalseClass, NilClass,
         Symbol, Date, Time, DateTime, BigDecimal, Rational
     ]
     @hash_name_classes = @data_classes + [Proc]
-    @tab = "  "
-    @indexes = true
-    @full_proc_path = false
-    @braces = true
-    @date_format = '%F'
-    @time_format = '%c'
-    @datetime_format = '%FT%T%:z'
-    @color = true
-    @colors = {
-        attribute:   :blue,
-        bigdecimal:  :darkcyan,
-        classname:   :darkgreen,
-        classobject: :green,
-        date:        :red,
-        datetime:    :purple,
-        false:       :darkred,
-        float:       :cyan,
-        index:       :darkgrey,
-        integer:     :cyan,
-        module:      :green,
-        nil:         :darkpurple,
-        proc:        :darkyellow,
-        rational:    :darkcyan,
-        string:      :yellow,
-        struct:      :green,
-        symbol:      :darkblue,
-        time:        :darkblue,
-        true:        :darkgreen
+    @tab               = "  "
+    @indexes           = true
+    @full_proc_path    = false
+    @braces            = true
+    @date_format       = '%F'
+    @time_format       = '%c'
+    @datetime_format   = '%FT%T%:z'
+    @hash_separator    = ' => '
+    @commas            = true
+    @color             = true
+    @colors            = {
+        attribute:      :blue,
+        bigdecimal:     :darkcyan,
+        classname:      :darkgreen,
+        classobject:    :green,
+        comma:         :default,
+        curly_brace:    :default,
+        date:           :red,
+        datetime:       :purple,
+        equals:         :default,
+        false:          :darkred,
+        float:          :cyan,
+        hash_separator: :default,
+        index:          :darkgrey,
+        integer:        :cyan,
+        module:         :green,
+        nil:            :darkpurple,
+        parentheses:    :default,
+        proc:           :darkyellow,
+        rational:       :darkcyan,
+        string:         :yellow,
+        struct:         :green,
+        square_brace:   :default,
+        symbol:         :darkblue,
+        time:           :darkblue,
+        true:           :darkgreen
     }
-    @color_codes = {
+    @color_codes       = {
         black:      "\e[30m",
         blue:       "\e[94m",
         darkblue:   "\e[34m",
@@ -53,25 +61,12 @@ module XPrint
         darkpurple: "\e[35m",
         yellow:     "\e[93m",
         darkyellow: "\e[33m",
-        reset:      "\e[0m"
+        default:    "\e[0m"
     }
 
     def self.set(**kwargs)
-        set_vars = {
-            tab:             ->(data) { @tab             = data },
-            indexes:         ->(data) { @indexes         = data },
-            full_proc_path:  ->(data) { @full_proc_path  = data },
-            braces:          ->(data) { @braces          = data },
-            date_format:     ->(data) { @date_format     = data },
-            time_format:     ->(data) { @time_format     = data },
-            datetime_format: ->(data) { @datetime_format = data },
-            color:           ->(data) { @color           = data }
-        }
-    
         kwargs.each do |keyword, arg|
-            if set_vars.key? keyword
-                set_vars[keyword].(arg)
-            end
+            self.instance_variable_set "@#{keyword}", arg
         end
     
         return
@@ -148,7 +143,7 @@ module XPrint
     end
 
     private_class_method def self.reset_color()
-        @color_codes[:reset]
+        @color_codes[:default]
     end
 
     private_class_method def self.colorize(text, type)
@@ -217,7 +212,8 @@ module XPrint
         
         # X is an Array, print list of all items.
         elsif x.class == Array
-            result = "#{@braces ? '[' : ''}\n"
+            result = "#{@braces ? colorize('[', :square_brace) : ''}\n"
+            comma = colorize(',', :comma)
     
             x.each_with_index do |item, index|
                 data = xpand(item, indent: _indent, tab: tab)
@@ -234,16 +230,17 @@ module XPrint
                 result += "#{data}"
     
                 unless index + 1 == x.length
-                    result += "#{@braces ? ', ' : ''} \n"
+                    result += "#{@commas ? "#{comma} " : ''} \n"
                 end
             end
     
-            result += "\n#{indent}]" if @braces
+            result += "\n#{indent}#{colorize(']', :square_brace)}" if @braces
             return result
         
         # X is a Hash, print all keys and values.
         elsif x.class == Hash
-            result = "#{@braces ? '{' : ''}\n"
+            comma = colorize(',', :comma)
+            result = "#{@braces ? colorize('{', :curly_brace) : ''}\n"
 
             longest_key = (
                 x.keys.filter do |k, v|
@@ -277,63 +274,81 @@ module XPrint
 
                 data_value = xpand(value, indent: _indent, tab: tab)
 
-                result += "#{_indent}#{data_key} => #{data_value}"
+                hash_separator = colorize(@hash_separator, :hash_separator)
+                result += "#{_indent}#{data_key}#{hash_separator}#{data_value}"
 
                 unless index + 1 == x.length
-                    result += "#{@braces ? ', ' : ''} \n"
+                    result += "#{@commas ? "#{comma} " : ''} \n"
                 end
             end
 
-            result += "\n#{indent}}" if @braces
+            result += "\n#{indent}#{colorize('}', :curly_brace)}" if @braces
     
             return result
 
         # X is a commonly used special kind of object.
         elsif x.class == DateTime
             datetime = x.strftime @datetime_format
-            return colorize("DateTime(#{datetime})", :datetime)
+            p1 = colorize('(', :parentheses)
+            p2 = colorize(')', :parentheses)
+            return colorize("DateTime#{p1}#{datetime}#{p2}", :datetime)
         
         elsif x.class == Date
             date = x.strftime @date_format
-            return colorize("Date(#{date})", :date)
+            p1 = colorize('(', :parentheses)
+            p2 = colorize(')', :parentheses)
+            return colorize("Date#{p1}#{date}#{p2}", :date)
         
         elsif x.class == Time
             time = x.strftime @time_format
-            return colorize("Time(#{time})", :time)
+            p1 = colorize('(', :parentheses)
+            p2 = colorize(')', :parentheses)
+            return colorize("Time#{p1}#{time}#{p2}", :time)
         
         elsif x.class == BigDecimal
-            return colorize("BigDecimal(#{x.to_s('f')})", :bigdecimal)
+            p1 = colorize('(', :parentheses)
+            p2 = colorize(')', :parentheses)
+            return colorize("BigDecimal#{p1}#{x.to_s('f')}#{p2}", :bigdecimal)
         
         elsif x.class == Rational
-            return colorize("Rational(#{x})", :rational)
+            p1 = colorize('(', :parentheses)
+            p2 = colorize(')', :parentheses)
+            return colorize("Rational#{p1}#{x}#{p2}", :rational)
         
         # X is a Structure; essentially a special case of X being an object.
         elsif x.is_a? Struct
             struct_word = colorize('Struct', :struct)
             classname = colorize(x.class, :struct)
-            result = "#{struct_word} #{classname}#{@braces ? '(' : ''}\n"
+            p1 = colorize('(', :parentheses)
+            p2 = colorize(')', :parentheses)
+            result = "#{struct_word} #{classname}#{@braces ? p1 : ''}\n"
             longest_item = x.members.map { |m| m.to_s.length }.max()
+            eq_sign = colorize('=', :equals)
 
             x.each_pair do |name, value|
                 attr_name = colorize(name.to_s.ljust(longest_item), :attribute)
                 attr_data = xpand(value, indent: _indent, tab: tab)
 
-                result += "#{_indent}#{attr_name} = #{attr_data}\n"
+                result += "#{_indent}#{attr_name} #{eq_sign} #{attr_data}\n"
             end
 
-            result += "#{indent})" if @braces
+            result += "#{indent}#{p2}" if @braces
 
             return result
         
         # X is any arbitrary object; print all instance variables.
         else
+            p1 = colorize('(', :parentheses)
+            p2 = colorize(')', :parentheses)
+
             is_module = x.class == Module
             classname = is_module ? "Module #{x}" : x.class
             classname = colorize(classname, is_module ? :module : :classname)
-            result = "#{classname}#{@braces ? '(' : ''}"
+            result = "#{classname}#{@braces ? p1 : ''}"
             ivars = x.instance_variables
             result += "\n" if ivars.length > 0
             longest_var = ivars.map { |v| v.to_s.length }.max()
+            eq_sign = colorize('=', :equals)
     
             ivars.each_with_index do |var, index|
                 attr_name = var.to_s.ljust(longest_var)
@@ -344,10 +359,10 @@ module XPrint
                     tab: tab
                 )
 
-                result += "#{_indent}#{attr_name} = #{attr_data}\n"
+                result += "#{_indent}#{attr_name} #{eq_sign} #{attr_data}\n"
             end
     
-            result += "#{ivars.length > 0 ? indent: ''})" if @braces
+            result += "#{ivars.length > 0 ? indent: ''}#{p2}" if @braces
     
             return result
         end

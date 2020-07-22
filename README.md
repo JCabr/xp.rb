@@ -21,7 +21,8 @@ xprint will:
     - Structs are also covered, being slightly different but
       are shown the same way.
     - Modules are also covered.
-- Any nested data, like an object inside of an object, will be shown fully.
+- Any nested data, like an object inside of an object, will be shown 
+  fully.
 
 
 The name is short for "X-panding Print".
@@ -206,8 +207,8 @@ colors) and the text to use for each "tab" used when indenting data.
 
 To customize these features, you just modify the XPrint module:
 ```rb
-# Want 4 spaces for tabs and no braces? Do this:
-XPrint.set tab: ' ' * 4,  braces: false
+# Want simple looking output and 4-space tabs? Do this:
+XPrint.set tab: ' ' * 4,  braces: false, commas: false
 
 friends = {
     'Jim' => {
@@ -228,7 +229,7 @@ Output:
         [2] 3
 "Jam" => 
     :favorite_numbers => 
-        [0] 2 
+        [0] 2
         [1] 6
 ```
 
