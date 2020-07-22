@@ -23,7 +23,7 @@ module XPrint
         bigdecimal:     :darkcyan,
         classname:      :darkgreen,
         classobject:    :green,
-        comma:         :default,
+        comma:          :default,
         curly_brace:    :default,
         date:           :red,
         datetime:       :purple,
