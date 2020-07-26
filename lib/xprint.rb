@@ -2,6 +2,8 @@ require 'bigdecimal'
 require 'date'
 require 'yaml'
 
+# TODO: Add ability for alphabetically sorting
+#       items in hashes and objects.
 module XPrint
     @data_classes      = [
         String, Integer, Float, TrueClass, FalseClass, NilClass,
@@ -230,7 +232,10 @@ module XPrint
                 result += "#{data}"
     
                 unless index + 1 == x.length
-                    result += "#{@commas ? "#{comma} " : ''} \n"
+                    show_commas = @commas && @braces
+
+                    result += "#{show_commas ? "#{comma}" : ''}"
+                    result += "\n" unless result.end_with? "\n"
                 end
             end
     
@@ -278,7 +283,9 @@ module XPrint
                 result += "#{_indent}#{data_key}#{hash_separator}#{data_value}"
 
                 unless index + 1 == x.length
-                    result += "#{@commas ? "#{comma} " : ''} \n"
+                    show_commas = @commas && @braces
+                    result += "#{show_commas ? "#{comma} " : ''}"
+                    result += "\n" unless result.end_with? "\n"
                 end
             end
 
