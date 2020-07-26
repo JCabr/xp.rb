@@ -336,7 +336,8 @@ module XPrint
                 attr_name = colorize(name.to_s.ljust(longest_item), :attribute)
                 attr_data = xpand(value, indent: _indent, tab: tab)
 
-                result += "#{_indent}#{attr_name} #{eq_sign} #{attr_data}\n"
+                result += "#{_indent}#{attr_name} #{eq_sign} #{attr_data}"
+                result += "\n" unless result.end_with? "\n"
             end
 
             result += "#{indent}#{p2}" if @braces
@@ -366,7 +367,8 @@ module XPrint
                     tab: tab
                 )
 
-                result += "#{_indent}#{attr_name} #{eq_sign} #{attr_data}\n"
+                result += "#{_indent}#{attr_name} #{eq_sign} #{attr_data}"
+                result += "\n" unless result.end_with? "\n"
             end
     
             result += "#{ivars.length > 0 ? indent: ''}#{p2}" if @braces
