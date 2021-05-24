@@ -7,7 +7,7 @@ with indentation, but unlike the common methods for printing will
 also work for any object.
 
 xprint will:
-- Show basic kinds of data (numbers, strings, symbols, booleans, nil) 
+- Show basic kinds of data (numbers, strings, symbols, regexps, booleans, nil) 
   pretty much as-is.
     - Also supports commonly used data objects like:
         - Proc, Date, Time, DateTime, BigDecimal, and Rational.
